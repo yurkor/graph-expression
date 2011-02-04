@@ -11,13 +11,6 @@ import java.util.List;
 
 import static com.myml.gexp.graph.matcher.GraphRegExp.*;
 
-/**
- * Created by IntelliJ IDEA.
- * User: yura
- * Date: 07.10.2010
- * Time: 13:19:52
- * To change this template use File | Settings | File Templates.
- */
 public class GraphRegExpTest extends Assert {
     static GraphContext context = new GraphContext() {
         public Iterable<Edge> getEdges(GraphRegExp.Node node) {
