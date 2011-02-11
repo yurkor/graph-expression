@@ -46,7 +46,7 @@ public class GraphUtils extends GraphExpChunker {
                         matchers.add(matcher);
                 }
                 for (int i = min; i < max; ++i) {
-                        matchers.add(weighted(opt(matcher).relucant(), SUM_INNER_MATCHES));
+                        matchers.add(weighted(opt(matcher).reluctant(), SUM_INNER_MATCHES));
                 }
                 return selectBest(matchers.toArray(new GraphRegExp.Matcher[0]));
         }
