@@ -1,5 +1,6 @@
 package com.myml.gexp.graph.matcher;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections15.Transformer;
@@ -62,6 +63,7 @@ public class GraphRegExpExt extends GraphRegExp {
 		private Transformer<Match, Double> scorer;
 		private Matcher innedMatcher;
 		private boolean bestFirst = false;
+                private boolean showBest = false;
 
 		public WeightedMatcher(Transformer<Match, Double> scorer, Matcher innedMatcher) {
 			this.scorer = scorer;
@@ -83,7 +85,11 @@ public class GraphRegExpExt extends GraphRegExp {
 							return new WeightedMatch(result.current(), scorer.transform(result.current()));
 						return null;
 					}
-				};
+
+                                        public boolean isBestFirst() {
+                                                return showBest;
+                                        }
+                                };
 
 			} else {
 				return new MatchResult() {
@@ -123,7 +129,12 @@ public class GraphRegExpExt extends GraphRegExp {
 		public List<Matcher> getSubMatchers() {
 			return Collections.singletonList(innedMatcher);
 		}
-	}
+
+                public WeightedMatcher setShowBestFist(boolean b) {
+                        showBest = b;
+                        return this;
+                }
+        }
 
 	/**
 	 * minimize weights
@@ -176,15 +187,27 @@ public class GraphRegExpExt extends GraphRegExp {
 						return position == matchers.size();
 					}
 
-					public Path addMatchToNew(Match m) {
-						List<Match> matches = Lists.newArrayList(getSubMatches());
-						matches.add(m);
-						double newScore = 0;
-						if(m instanceof WeightedMatch) {
-							newScore = ((WeightedMatch)m).score;
-						}
-						return new Path(score + newScore, position + 1, matches.toArray(new Match[matches.size()]));
-					}
+					     public Path addMatchToNew(Match m) {
+                                                List<Match> matches = Lists.newArrayList(getSubMatches());
+                                                matches.add(m);
+                                                return new Path(score + eval(m), position + 1, matches.toArray(new Match[matches.size()]));
+                                        }
+
+                                        public Path changeLastToNew(Match m) {
+                                                List<Match> matches = Lists.newArrayList(getSubMatches());
+                                                Match prev = Iterables.getLast(matches);
+                                                matches.set(matches.size() - 1, m);
+                                                Path newPath = new Path(score + eval(m) - eval(prev), position, matches.toArray(new Match[matches.size()]));
+                                                newPath.res = this.res;
+                                                return newPath;
+                                        }
+
+                                        private double eval(Match m) {
+                                                if (m instanceof WeightedMatch) {
+                                                        return ((WeightedMatch) m).score;
+                                                }
+                                                return 0;
+                                        }
 				}
 
 				SortedSet<Path> set;
@@ -198,44 +221,41 @@ public class GraphRegExpExt extends GraphRegExp {
 
 				@Override
 				protected Match nextInner() {
-					Path p = null;
-					while (!set.isEmpty()) {
-						Iterator<Path> pi = set.iterator();
-						p = pi.next();
-						pi.remove();
-						//means result match is best first
-						if (p.res != null && p.res.next() != null) {
-							Path newPath = p.addMatchToNew(p.res.current());
-							newPath.res = p.res;
-							newPath.position--; //we on same position as before
-							set.add(newPath);
-						}
+					        Path currentMatch = null;
+                                        while (!set.isEmpty()) {
+                                                Iterator<Path> pathQueueIterator = set.iterator();
+                                                currentMatch = pathQueueIterator.next();
+                                                pathQueueIterator.remove();
+                                                //means result match is best first
+                                                if (currentMatch.res != null && currentMatch.res.isBestFirst() && currentMatch.res.next() != null) {
+                                                        set.add(currentMatch.changeLastToNew(currentMatch.res.current()));
+                                                }
 
-						if (p.isFinal()) break;
-						Node n = p.getEndNode();
-						if (n == null) n = node;
-						MatchResult res = matchers.get(p.position).find(n, context);
-						if (res.isBestFirst()) {
-							//open only first
-							if (res.next() != null) {
-								Path newPath = p.addMatchToNew(res.current());
-								newPath.res = res;
-								set.add(newPath);
-							}
+                                                if (currentMatch.isFinal()) break;
+                                                Node n = currentMatch.getEndNode();
+                                                if (n == null) n = node;
+                                                MatchResult nextMatchResult = matchers.get(currentMatch.position).find(n, context);
+                                                if (nextMatchResult.isBestFirst()) {
+                                                        //open only first
+                                                        if (nextMatchResult.next() != null) {
+                                                                Path newPath = currentMatch.addMatchToNew(nextMatchResult.current());
+                                                                newPath.res = nextMatchResult;
+                                                                set.add(newPath);
+                                                        }
 
 
-						} else {
-							//open all nodes
-							for (Match m : res.getAllMatches()) {
-								Path newPath = p.addMatchToNew(m);
-								set.add(newPath);
-							}
-						}
-					}
-					if (p == null || !p.isFinal() || p.score >= maxValue) {
-						set.clear();
-						return null;
-					} else return p;
+                                                } else {
+                                                        //open all nodes
+                                                        for (Match m : nextMatchResult.getAllMatches()) {
+                                                                Path newPath = currentMatch.addMatchToNew(m);
+                                                                set.add(newPath);
+                                                        }
+                                                }
+                                        }
+                                        if (currentMatch == null || !currentMatch.isFinal() || currentMatch.score >= maxValue) {
+                                                set.clear();
+                                                return null;
+                                        } else return new WeightedMatch(currentMatch, currentMatch.score);
 				}
 			};
 		}

@@ -45,6 +45,10 @@ public class Chunkers {
         };
     }
 
+        public static Chunker regexp(final String type, final String regExp) {
+                return regexp(type, regExp, 0);
+        }
+
     public static void execute(Chunker chunker, TextWithChunks textWithChunks) {
         textWithChunks.addAll(chunker.chunk(textWithChunks));
     }
