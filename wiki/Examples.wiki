@@ -38,7 +38,7 @@ from text
                                                 seq(commonPart, Comma, PersonSuffix, opt(Dot)),
                                                 seq(CapitalizedWord, CapitalLetter, Dot, CapitalizedWord))
                                         ),
-                                        seq(mark("Person", seq(CapitalizedWord, CapitalLetter)), PersonVerbs)
+                                        seq(mark("Person", commonPart), PersonVerbs)
                                 )
                         ).setDebugString(true)
                 );
