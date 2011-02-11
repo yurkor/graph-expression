@@ -1,3 +1,4 @@
+#labels Featured
 == Person Extraction Example ==
 
 Following code will extract those person chunks: 
