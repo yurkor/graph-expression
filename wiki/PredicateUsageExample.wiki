@@ -1,0 +1,52 @@
+== Predicate Usage Example ==
+
+Suppose we want to mark all IP address.
+I could write so todo, but then we'd marked 333.333.333.333 as IP. Number from 0 to 255 in regular expressions will look like
+{{{
+Pattern.compile ("([1-9] | [1-9] [0-9] | 1 [0-9] [0-9] | 2 ([0-4] [0-9] | 5 [0-5 ]))");
+}}} 
+predicates can avoid such complexity.
+Graph-ehpression allows you to specify predicates over their patterns, that's how it looks
+{{{
+ GraphRegExp.Matcher Token = match("Token");
+                GraphRegExp.Matcher Number = G.regexp("^\\d+$", Token);
+
+                GraphRegExp.Matcher NotNumber = G.regexp("^[^\\d]+$", Token);
+                class NumberPredicate implements Predicate<GraphMatchWrapper> {
+                        int min;
+                        int max;
+
+                        NumberPredicate(int min, int max) {
+                                this.min = min;
+                                this.max = max;
+                        }
+
+                        public boolean evaluate(GraphMatchWrapper graphMatchWrapper) {
+                                Integer number = Integer.parseInt(graphMatchWrapper.getText());
+                                return number >= min && number <= max;
+                        }
+                }
+
+
+                Chunker ipChunker = Chunkers.pipeline(
+                        Chunkers.regexp("Token", "\\w+"),
+                        new GraphExpChunker(null,
+                                seq(
+                                        NotNumber,
+                                        mark("IpAddress", seq(
+                                                match(Number, new NumberPredicate(1, 255)),
+                                                times(match(Number, new NumberPredicate(0, 255)), 3, 3)
+                                        )),
+                                        NotNumber
+                                )
+                        )
+                );
+}}}
+
+Using following text
+{{{
+      String text = "some text 123.255.888.555 some text " +
+                        "255.255.1.1 some text 1.1.255.134 some text 1.1.1.1.1.1.1.1.1";
+}}}
+we will mark only 
+1.1.255.134 | 255.255.1.1
