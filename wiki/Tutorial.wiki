@@ -1,0 +1,51 @@
+ == Person Extraction ==
+
+Following code will extract those person chunks: 
+"Bill Smith | Devid Kent, Sr. | Devid M. Donald | Jonny K | Mr. Ahuna Edwards"
+from text 
+{{{
+    String text = " Mr. Ahuna Edwards is first person. " +
+                        "Devid Kent, Sr. is second person. " +
+                        "Devid M. Donald is just another person. " +
+                        "Bill Smith is person with first name. Jonny K said: I'm happy.";
+
+}}}
+
+{{{
+ public Chunker createPersonChunker() {
+                GraphRegExp.Matcher Token = match("Token");
+                GraphRegExp.Matcher Honorific =  G.regexp("^(Dr|Prof|Ms|Mrs|Mr)$",Token);
+                GraphRegExp.Matcher CapitalizedWord = G.regexp("^[A-Z]\\w+$",Token);
+                GraphRegExp.Matcher PersonSuffix = G.regexp("^(Jr|Sr)$",Token);
+                GraphRegExp.Matcher CapitalLetter = G.regexp("^[A-Z]$",Token);
+                GraphRegExp.Matcher FirstName = G.regexp("^(Bill|John)$",Token);
+                GraphRegExp.Matcher Dot = match("Dot");
+                GraphRegExp.Matcher Comma = match("Comma");
+                GraphRegExp.Matcher PersonVerbs = G.regexp("^(said|met|walked)$",Token);
+
+
+                GraphRegExp.Matcher commonPart = seq(CapitalizedWord, or(CapitalizedWord, seq(CapitalLetter, Dot)));
+                Chunker chunker = Chunkers.pipeline(
+                        Chunkers.regexp("Token", "\\w+"),
+                        Chunkers.regexp("Dot", "\\."),
+                        Chunkers.regexp("Comma", ","),
+                        new GraphExpChunker(null,
+                                or(
+                                        mark("Person", or(
+                                                seq(Honorific, opt(Dot), commonPart),
+                                                seq(FirstName, CapitalizedWord),
+                                                seq(commonPart, Comma, PersonSuffix, opt(Dot)),
+                                                seq(CapitalizedWord, CapitalLetter, Dot, CapitalizedWord))
+                                        ),
+                                        seq(mark("Person", seq(CapitalizedWord, CapitalLetter)), PersonVerbs)
+                                )
+                        ).setDebugString(true)
+                );
+                return chunker;
+        }
+}}}
+
+ * First we create helper clunkers: Token, Dot, Comma.
+ * Then we create subset of Token chunks which satisfy predicate regexps those are: CapitalizedWord, PersonSuffix etc.
+ * We write several Person patterns and test them
+ * Thats all. 
