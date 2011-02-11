@@ -402,7 +402,7 @@ public class GraphRegExp {
             return this;
         }
 
-        public Star relucant() {
+        public Star reluctant() {
             this.greedy = false;
             return this;
         }

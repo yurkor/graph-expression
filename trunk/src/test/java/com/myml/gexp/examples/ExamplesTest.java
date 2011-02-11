@@ -12,7 +12,6 @@ import com.myml.gexp.graph.matcher.GraphRegExp;
 import com.myml.gexp.graph.matcher.GraphRegExpExt;
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
-import org.apache.commons.lang.mutable.MutableInt;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -180,7 +179,7 @@ public class ExamplesTest extends Assert {
                                 return m.getChunksList().size() * 0.2;
                         }
                 };
-                GraphRegExpExt.WeightedMatcher tokens = weighted(star(token).relucant(), length).setShowBestFist(true);
+                GraphRegExpExt.WeightedMatcher tokens = weighted(star(token).reluctant(), length).setShowBestFist(true);
                 GraphExpChunker personChunker = new GraphExpChunker(null,
                         selectBest(
                                 match(GraphUtils.START),
