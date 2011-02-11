@@ -103,3 +103,6 @@ Using following text
 }}}
 we will mark only 
 1.1.255.134 | 255.255.1.1
+
+== Using weighted automaton ==
+WeightedRegExpExample
