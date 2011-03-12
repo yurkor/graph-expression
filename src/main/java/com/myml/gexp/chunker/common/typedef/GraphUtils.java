@@ -81,4 +81,14 @@ public class GraphUtils extends GraphExpChunker {
                         return matches;
                 }
         }
+
+        public static GraphRegExp.Matcher logger(final String name, GraphRegExp.Matcher matcher) {
+                return match(matcher, new Predicate<GraphMatchWrapper>() {
+                        @Override
+                        public boolean evaluate(GraphMatchWrapper graphMatchWrapper) {
+                                System.out.printf("%s=%s\n", name, graphMatchWrapper.getText());
+                                return true;
+                        }
+                });
+        }
 }
