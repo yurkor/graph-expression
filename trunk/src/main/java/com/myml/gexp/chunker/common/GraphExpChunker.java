@@ -8,6 +8,9 @@ import com.myml.gexp.chunker.Chunk;
 import com.myml.gexp.chunker.Chunker;
 import com.myml.gexp.chunker.Chunkers;
 import com.myml.gexp.chunker.TextWithChunks;
+import com.myml.gexp.chunker.common.graph.InnerGraphMatcher;
+import com.myml.gexp.chunker.common.graph.NextNodeMatcher;
+import com.myml.gexp.graph.matcher.GraphRegExp;
 import com.myml.gexp.graph.matcher.GraphRegExpExt;
 import com.myml.gexp.graph.matcher.GraphRegExpMatchers;
 import org.apache.commons.collections15.Predicate;
@@ -48,7 +51,7 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
                 }
 
                 public <T> T put(String key, T value) {
-                        return null;
+                        throw new UnsupportedOperationException("Use context matcher wrapper to put some values to context");
                 }
 
                 public <T> T get(String key) {
@@ -84,7 +87,8 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
                                                 }
                                         }
                                 }
-                        }},
+                        }
+                },
                 WEAK_LINKS {
                         @Override
                         public void process(PositionNode prevN, PositionNode curN) {
@@ -98,7 +102,8 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
                                 if (!hasLink) {
                                         Iterables.addAll(prevN.edges, (Iterable) CONTEXT.getEdges(curN));
                                 }
-                        }};
+                        }
+                };
 
                 public void process(PositionNode prevNode, PositionNode currentNode) {
                 }
@@ -553,14 +558,26 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
                 return new GraphRegExpExt.AStarMatcher(Arrays.asList(mm));
         }
 
-//    public static Matcher insideFind(Matcher condition, Matcher matcher) {
-//        Matcher any = star(nextNodeMatcher()).relucant();
-//        return new InnerGraphMatcher(condition, seq(any, matcher));
-//    }
-//
-//    public static NextNodeMatcher nextNodeMatcher() {
-//        return new NextNodeMatcher();
-//    }
+        public static Matcher insideFind(Matcher condition, Matcher matcher) {
+                Matcher any = star(nextNodeMatcher()).reluctant();
+                return new InnerGraphMatcher(condition, seq(any, matcher));
+        }
+
+
+        public static InnerGraphMatcher insideFindAll(Matcher container, Matcher innerMatcher) {
+                Matcher any = star(nextNodeMatcher()).reluctant();
+                return new InnerGraphMatcher(container, plus(seq(any, innerMatcher)));
+        }
+
+        public static InnerGraphMatcher boundedMatchWithin(GraphRegExp.Matcher containerCategory,
+							     final GraphRegExp.Matcher innerMatcher) {
+		return new InnerGraphMatcher(containerCategory, innerMatcher).setPerformFullMatch();
+	}
+
+
+        public static NextNodeMatcher nextNodeMatcher() {
+                return new NextNodeMatcher();
+        }
 
         public static GraphRegExpExt.WeightedMatcher weighted(final Matcher m, final Transformer<GraphMatchWrapper, Double> scorer) {
                 return new GraphRegExpExt.WeightedMatcher(new Transformer<Match, Double>() {
