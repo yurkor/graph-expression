@@ -1,5 +1,6 @@
 Date Extraction example:
-input {{{
+input 
+{{{
  String data = Joiner.on(SPLITTER).join(
                         "12 June 1983",   //ok
                         "133 June 2000", //fail
