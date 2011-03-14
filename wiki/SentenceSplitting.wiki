@@ -1,0 +1,15 @@
+{{{
+ImpossiblePrefix := (Mr|Ms|U.S|[A-Z]|etc)
+PossibleStop := (!|"|\. etc)
+ImpossibleStart := (braces|posible) | PossibleStop
+Token := (\B\W+\B|\b\w+\b)
+
+//actual pattern for Stop chunk
+Rule1 := (?not[ImpossiblePrefix] Token) (=Stop PossibleStop) (?not[ImpossibleStart]) 
+
+Rule2 := START cut[(Token+? (STOP|END))]* END
+
+
+
+}}}
+TODO:
