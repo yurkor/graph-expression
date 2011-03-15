@@ -1,6 +1,7 @@
 Here is example of how sentence splitting can be written in GExp.
 The idea is short subset of heuristic model in lingpipe (http://alias-i.com/lingpipe/docs/api/com/aliasi/sentences/IndoEuropeanSentenceModel.html).
 It defines possible stop tokens, and some restriction on before and after tokens which negotiates some stops.
+Token chunk is different from previous examples, because now we should work with non word characters sequence.
 
 Input:
 {{{
