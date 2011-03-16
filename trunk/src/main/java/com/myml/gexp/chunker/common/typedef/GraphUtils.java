@@ -6,6 +6,7 @@ import com.myml.gexp.chunker.common.GraphMatchWrapper;
 import com.myml.gexp.graph.matcher.GraphRegExp;
 import com.myml.gexp.graph.matcher.GraphRegExpExt;
 import org.apache.commons.collections15.Predicate;
+import org.apache.commons.collections15.PredicateUtils;
 import org.apache.commons.collections15.Transformer;
 
 import java.util.Collections;
@@ -90,5 +91,11 @@ public class GraphUtils extends GraphExpChunker {
                                 return true;
                         }
                 });
+        }
+
+        public static GraphRegExp.Matcher lookahead(boolean positive, GraphRegExp.Matcher matcher, GraphRegExp.Matcher lookahead) {
+                Predicate<GraphRegExp.Node> node = toPredicate(lookahead);
+                if (!positive) node = PredicateUtils.notPredicate(node);
+                return lookahead(matcher, node);
         }
 }
