@@ -8,7 +8,7 @@ import java.util.Arrays;
 import static com.myml.gexp.graph.matcher.GraphRegExp.*;
 
 /**
- * Author: Yura Korolov
+ * Author: java developer 1
  * Date: 04.02.2011
  * Time: 15:00:48
  */

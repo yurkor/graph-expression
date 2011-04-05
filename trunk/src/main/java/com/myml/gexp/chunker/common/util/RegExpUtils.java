@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Author: Yura Korolov
+ * Author: java developer 1
  * Date: 12.03.11
  * Time: 15:32
  */

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.SortedSet;
 
 /**
- * Author: Yura Korolov
+ * Author: java developer 1
  * Date: 13.10.2010
  * Time: 15:38:48
  */

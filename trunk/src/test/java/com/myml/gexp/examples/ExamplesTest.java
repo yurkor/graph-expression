@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import static com.myml.gexp.chunker.common.typedef.GraphUtils.*;
 
 /**
- * Author: Yura Korolov
+ * Author: java developer 1
  * Date: 04.02.2011
  * Time: 17:14:51
  */

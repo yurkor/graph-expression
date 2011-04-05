@@ -18,7 +18,7 @@ import static com.myml.gexp.graph.matcher.GraphRegExpMatchers.*;
 import static org.apache.commons.lang.StringUtils.countMatches;
 
 /**
- * Author: Yura Korolov
+ * Author: java developer 1
  * Date: 15.03.11
  * Time: 14:17
  */

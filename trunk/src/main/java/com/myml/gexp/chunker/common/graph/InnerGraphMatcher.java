@@ -11,7 +11,7 @@ import org.apache.commons.collections15.Predicate;
 import java.util.List;
 
 /**
- * Author: Yura Korolov
+ * Author: java developer 1
  * Date: 12.03.11
  * Time: 14:05
  */
