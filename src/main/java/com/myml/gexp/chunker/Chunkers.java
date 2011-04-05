@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Author: Yura Korolov
+ * Author: java developer 1
  * Date: 04.02.2011
  * Time: 15:40:32
  */

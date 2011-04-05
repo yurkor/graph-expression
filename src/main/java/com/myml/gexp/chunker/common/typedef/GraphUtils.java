@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Author: Yura Korolov
+ * Author: java developer 1
  * Date: 11.02.2011
  * Time: 12:31:04
  */

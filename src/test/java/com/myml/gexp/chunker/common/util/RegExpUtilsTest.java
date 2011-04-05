@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.util.List;
 
 /**
- * Author: Yura Korolov
+ * Author: java developer 1
  * Date: 12.03.11
  * Time: 15:37
  */

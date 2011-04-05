@@ -7,7 +7,7 @@ import org.apache.commons.collections15.Predicate;
 import java.util.*;
 
 /**
- * Author: Yura Korolov
+ * Author: java developer 1
  * Date: 04.02.2011
  * Time: 15:33:41
  */

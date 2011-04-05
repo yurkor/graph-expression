@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Author: Yura Korolov
+ * Author: java developer 1
  * Date: 04.02.2011
  * Time: 16:13:13
  */
