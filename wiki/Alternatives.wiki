@@ -1,9 +1,9 @@
 Alternatives:
 
-GATE(Jape grammar transducer) http://gate.ac.uk/ie/
-UIMA http://uima.apache.org
-NLTK(contains grammar parser) http://www.nltk.org
-Lingpipe(dictionary chunker && NER HMM) http://alias-i.com/lingpipe/
-Mallet(CRF/ACRF/HMM) http://mallet.cs.umass.edu/
-OpenNLP(MaxEnt? HMM) http://opennlp.sourceforge.net/
-Stanford CRF http://nlp.stanford.edu/software/CRF-NER.shtml
+ # GATE(Jape grammar transducer) http://gate.ac.uk/ie/
+ # UIMA http://uima.apache.org
+ # NLTK(contains grammar parser) http://www.nltk.org
+ # Lingpipe(dictionary chunker && NER HMM) http://alias-i.com/lingpipe/
+ # Mallet(CRF/ACRF/HMM) http://mallet.cs.umass.edu/
+ # OpenNLP(MaxEnt HMM) http://opennlp.sourceforge.net/
+ # Stanford CRF http://nlp.stanford.edu/software/CRF-NER.shtml
