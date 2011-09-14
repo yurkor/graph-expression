@@ -45,9 +45,9 @@ public class Chunkers {
         };
     }
 
-        public static Chunker regexp(final String type, final String regExp) {
-                return regexp(type, regExp, 0);
-        }
+    public static Chunker regexp(final String type, final String regExp) {
+        return regexp(type, regExp, 0);
+    }
 
     public static void execute(Chunker chunker, TextWithChunks textWithChunks) {
         textWithChunks.addAll(chunker.chunk(textWithChunks));
@@ -59,7 +59,9 @@ public class Chunkers {
         return new TreeSet<Chunk>();
     }
 
-    public static String toChunksString(TextWithChunks text, int contextOffset, boolean withToString, String... showOnly) {
+    @Deprecated
+    public static String toChunksString(TextWithChunks text, int contextOffset, boolean withToString,
+                                        String... showOnly) {
         StringBuilder sb = new StringBuilder();
         Collection<Chunk> set;
         if (showOnly.length == 0) {
@@ -69,9 +71,39 @@ public class Chunkers {
         }
         for (Chunk an : set) {
             if (withToString) {
-                sb.append(String.format("%s[%s]//%s\n%s\n", an.type, replaceEol(an.getContent()), an.toString(), replaceEol(StringUtils.substring(text.getContent(), an.start - contextOffset, an.end + contextOffset))));
+                sb.append(String.format("%s[%s]//%s\n%s\n", an.type, replaceEol(an.getContent()), an.toString(),
+                        replaceEol(StringUtils.substring(text.getContent(), an.start - contextOffset,
+                                an.end + contextOffset))));
             } else {
-                sb.append(String.format("%s[%s]\n%s\n", an.type, replaceEol(an.getContent()), replaceEol(StringUtils.substring(text.getContent(), an.start - contextOffset, an.start + contextOffset))));
+                sb.append(String.format("%s[%s]\n%s\n", an.type, replaceEol(an.getContent()),
+                        replaceEol(StringUtils.substring(text.getContent(), an.start - contextOffset,
+                                an.start + contextOffset))));
+
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String toChunksStringEx(TextWithChunks text, int contextOffset, boolean withToString,
+                                          String... showOnly) {
+        StringBuilder sb = new StringBuilder();
+        Collection<Chunk> set;
+        if (showOnly.length == 0) {
+            set = text;
+        } else {
+            set = text.retrieve(showOnly);
+        }
+        for (Chunk an : set) {
+            String s = replaceEol(
+                    StringUtils.substring(text.getContent(), Math.max(an.start - contextOffset,0), an.start)
+                            + "[[[" + an.getContent() + "]]]"
+                            + StringUtils.substring(text.getContent(), an.end, an.end + contextOffset)
+
+            );
+            if (withToString) {
+                sb.append(String.format("%s[%s]//%s\n%s\n", an.type, replaceEol(an.getContent()), an.toString(), s));
+            } else {
+                sb.append(String.format("%s[%s]\n%s\n", an.type, replaceEol(an.getContent()), s));
 
             }
         }

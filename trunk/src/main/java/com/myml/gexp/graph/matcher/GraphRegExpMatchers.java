@@ -49,7 +49,7 @@ public class GraphRegExpMatchers {
      * @param p
      * @return
      */
-    public static Matcher lookahead(Matcher matcher, Predicate<? super Node> p) {
+    public static LookaheadMatcher lookahead(Matcher matcher, Predicate<? super Node> p) {
         return new LookaheadMatcher(matcher, (Predicate<Node>) p);
     }
 

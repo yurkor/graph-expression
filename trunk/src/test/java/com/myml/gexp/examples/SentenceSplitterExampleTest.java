@@ -90,7 +90,7 @@ public class SentenceSplitterExampleTest extends Assert {
                         "Stop[.]\n" +
                         "nd.\\n\n" +
                         "Sentence[And there's no dot, but it's the last]\n" +
-                        ".\\nAn\n", Chunkers.toChunksString(textWithChunks, 2, false, "Sentence"));
+                        ".\\nAn\n", Chunkers.toChunksString(textWithChunks, 2, false, "Sentence", "Stop"));
         }
 
 }
