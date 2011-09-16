@@ -117,9 +117,11 @@ public class GraphUtils extends GraphExpChunker {
         return lookahead(matcher, node).setInPredicate(Lists.newArrayList(lookahead));
     }
 
-    public static GraphRegExp.Matcher lookbehind(GraphRegExp.Matcher matcher, int stepBackword) {
+    public static GraphRegExp.Matcher lookbehind(GraphRegExp.Matcher matcher, int stepBackwordMax) {
         //TODO: should and at current possition
-        return lookahead(seq(times(nextNodeMatcher().setInverse(true), 0, stepBackword), matcher));
+//        return insideFind(times(nextNodeMatcher().setInverse(true), 0, stepBackword), matcher)
+//                .setPerformFullMatch();
+        return lookahead(emptyMatch(), seq(times(nextNodeMatcher().setInverse(true), 0, stepBackwordMax), matcher));
     }
 
     public static GraphRegExp.Matcher lookahead(GraphRegExp.Matcher... matcher) {

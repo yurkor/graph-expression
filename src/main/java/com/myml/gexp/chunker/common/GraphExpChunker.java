@@ -28,17 +28,16 @@ import static com.myml.gexp.graph.matcher.GraphRegExp.*;
  * Time: 15:55:05
  */
 public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
-    public static final String END = "END";
-    public static final String START = "START";
+    public static final String END = "DOCUMENT.END";
+    public static final String START = "DOCUMENT.START";
 
     private Matcher matcher;
     private String rootCategory;
     private Set<String> workOnCategories;
-    public static final String ROOT = "ROOT";
-    private boolean useHtml = false;
     private boolean matchFromAllPosition = false;
     private boolean matchAll = false;
     private boolean debugString = false;
+    private Set<Chunker> preprocessors = Sets.newLinkedHashSet();
 
     GraphConverter converter = GraphConverter.WEAK_LINKS;
     public static final GraphContext CONTEXT = new GraphContext() {
@@ -135,7 +134,12 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
                 }
             }
             if (m instanceof CategoriesHolder) {
-                workOnCategories.addAll(((CategoriesHolder) m).getCategories());
+                CategoriesHolder ch = (CategoriesHolder) m;
+                workOnCategories.addAll(ch.getCategories());
+                if(ch.isRegExps()) {
+                    for(String s : ch.getCategories())
+                    preprocessors.add(Chunkers.regexp(s,s));
+                }
             }
         }
     }
@@ -233,6 +237,8 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
         //add start and end
         chunks.add(new Chunk(chunkText, START, 0, 0));
         chunks.add(new Chunk(chunkText, END, chunkText.getContent().length(), chunkText.getContent().length()));
+        //add chunk from preprocessors
+        for(Chunker ch : preprocessors) chunks.addAll(ch.chunk(chunkText));
 
         List<Node> node = toNode(chunks);
         if (node == null || node.isEmpty()) return result;
@@ -505,6 +511,9 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
         if (categories.length == 0) return match(PredicateUtils.<Chunk>truePredicate());
         return matchCategories(PredicateUtils.<Chunk>truePredicate(), categories);
     }
+    public static Matcher matchRegexp(String... regexps) {
+        return matchCategories(PredicateUtils.<Chunk>truePredicate(), regexps).setRegExps(true);
+    }
 
     public static Matcher emptyMatch() {
         return times(match(), 0, 0);
@@ -540,7 +549,7 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
 //        };
 //    }
 
-    private static Matcher matchCategories(final Predicate<Chunk> pred, String... categories) {
+    private static PredicateMatcherWithCats matchCategories(final Predicate<Chunk> pred, String... categories) {
         final Set<String> cats = Sets.newHashSet(categories);
         return new PredicateMatcherWithCats(new Predicate<ChunkEdge>() {
             public boolean evaluate(ChunkEdge edge) {
@@ -621,7 +630,7 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
 
     private static class PredicateMatcherWithCats extends PredicateMatcher implements CategoriesHolder {
         Set<String> categories;
-
+        private boolean regExps;
         private PredicateMatcherWithCats(Predicate<? extends Edge> matchP, Set<String> categories) {
             super(matchP);
             this.categories = categories;
@@ -631,9 +640,20 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
         public Set<String> getCategories() {
             return categories;
         }
+
+
+        public boolean isRegExps() {
+            return regExps;
+        }
+
+        public PredicateMatcherWithCats setRegExps(boolean regExps) {
+            this.regExps = regExps;
+            return this;
+        }
     }
     public interface CategoriesHolder {
         Set<String> getCategories();
+        boolean isRegExps();
     }
 
 }

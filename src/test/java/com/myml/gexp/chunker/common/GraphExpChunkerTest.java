@@ -10,6 +10,23 @@ import org.junit.Test;
 import static com.myml.gexp.chunker.common.typedef.GraphUtils.*;
 
 public class GraphExpChunkerTest extends Assert {
+
+    //no need to run predefined pipeline when we use regexp(String regexp)
+    @Test
+    public void regexpPreporcessorTest() {
+        TextWithChunks chunkText = new TextWithChunks("a a c b b c a a");
+        GraphExpChunker ann = new GraphExpChunker("result",
+                seq(matchRegexp("a"), matchRegexp("c"), matchRegexp("b"))
+                , "b", "a", "c"
+        );
+        Chunkers.execute(ann, chunkText);
+
+
+        assertEquals("result[a c b]\n" +
+                "a [[[a c b]]] b c a a\n", Chunkers.toChunksStringEx(chunkText, 20, false,
+                "result"));
+
+    }
     //select all c without b ahead
     @Test
     public void notTest() {
