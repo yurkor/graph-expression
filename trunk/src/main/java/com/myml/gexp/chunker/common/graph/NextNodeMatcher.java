@@ -45,7 +45,7 @@ public class NextNodeMatcher extends GraphRegExp.Matcher {
                     if(!inverse) {
                         return new GraphRegExp.LeafMatch(context, node,node2, Collections.<GraphRegExp.Edge>emptyList());
                     } else {
-                        return new GraphRegExp.LeafMatch(context, node2,node2, Collections.<GraphRegExp.Edge>emptyList());
+                        return new GraphRegExp.LeafMatch(context, node,node2, Collections.<GraphRegExp.Edge>emptyList());
                     }
                 }
                 return null;

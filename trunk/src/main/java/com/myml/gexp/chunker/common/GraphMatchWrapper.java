@@ -70,7 +70,7 @@ public class GraphMatchWrapper {
                 GraphRegExp.Edge first = getFirstEdge(match, true);
                 GraphRegExp.Edge last = getFirstEdge(match, false);
                 if (first != null && last != null) {
-                        return ((GraphExpChunker.ChunkEdge) first).getAnn().text.text.substring(
+                        return ((GraphExpChunker.ChunkEdge) first).getAnn().text().text.substring(
                                 ((GraphExpChunker.ChunkEdge) first).getAnn().start,
                                 ((GraphExpChunker.ChunkEdge) last).getAnn().end
                         );

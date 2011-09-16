@@ -1,5 +1,6 @@
 package com.myml.gexp.chunker;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.apache.commons.collections15.CollectionUtils;
 import org.apache.commons.collections15.Predicate;
@@ -11,7 +12,7 @@ import java.util.*;
  * Date: 04.02.2011
  * Time: 15:33:41
  */
-public class TextWithChunks extends AbstractCollection<Chunk>{
+public class TextWithChunks extends AbstractCollection<Chunk> {
     public final String text;
     private SortedSet<Chunk> chunks = Chunkers.newSet();
 
@@ -46,11 +47,13 @@ public class TextWithChunks extends AbstractCollection<Chunk>{
     }
 
     public boolean add(Chunk chunk) {
+        Preconditions.checkArgument(chunk.text.text.hashCode() == this.text.hashCode(), "texts are different");
+        chunk.text = this;
         return chunks.add(chunk);
     }
 
     public SortedSet<Chunk> retrieve(final Set<String> types) {
-         return CollectionUtils.select(chunks, new Predicate<Chunk>() {
+        return CollectionUtils.select(chunks, new Predicate<Chunk>() {
             public boolean evaluate(Chunk chunk) {
                 return types.contains(chunk.type);
             }

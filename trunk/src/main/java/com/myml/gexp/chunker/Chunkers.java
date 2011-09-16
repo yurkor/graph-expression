@@ -1,6 +1,7 @@
 package com.myml.gexp.chunker;
 
 
+import com.google.common.base.Objects;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Collection;
@@ -31,7 +32,7 @@ public class Chunkers {
     }
 
     public static Chunker regexp(final String type, final String regExp, final int group) {
-        return new Chunker() {
+        class RegexpChunker implements Chunker {
             Pattern pat = Pattern.compile(regExp);
 
             public Collection<Chunk> chunk(TextWithChunks chunkText) {
@@ -41,6 +42,40 @@ public class Chunkers {
                     result.add(new Chunk(chunkText, type, matcher.start(group), matcher.end(group)));
                 }
                 return result;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (o == null || getClass() != o.getClass()) return false;
+                RegexpChunker that = (RegexpChunker) o;
+                return Objects.equal(pat.pattern(), that.pat.pattern());
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hashCode(pat.pattern());
+            }
+        }
+        return new RegexpChunker();
+    }
+
+
+    /**
+     * Create temporary chunks by preprocessor then execute mainChunker.
+     * After mainChunker were executed temporary annotation removed...
+     * Useful for creation of chunks requred only for one chunker
+     *
+     * @param preprocessor
+     * @param mainChunker
+     * @return
+     */
+    public static Chunker tempAndReal(final Chunker preprocessor, final Chunker mainChunker) {
+        return new Chunker() {
+            @Override
+            public Collection<Chunk> chunk(TextWithChunks chunkText) {
+                TextWithChunks tempText = new TextWithChunks(chunkText);
+                tempText.addAll(preprocessor.chunk(tempText));
+                return mainChunker.chunk(tempText);
             }
         };
     }
@@ -95,7 +130,7 @@ public class Chunkers {
         }
         for (Chunk an : set) {
             String s = replaceEol(
-                    StringUtils.substring(text.getContent(), Math.max(an.start - contextOffset,0), an.start)
+                    StringUtils.substring(text.getContent(), Math.max(an.start - contextOffset, 0), an.start)
                             + "[[[" + an.getContent() + "]]]"
                             + StringUtils.substring(text.getContent(), an.end, an.end + contextOffset)
 
