@@ -136,9 +136,9 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
             if (m instanceof CategoriesHolder) {
                 CategoriesHolder ch = (CategoriesHolder) m;
                 workOnCategories.addAll(ch.getCategories());
-                if(ch.isRegExps()) {
-                    for(String s : ch.getCategories())
-                    preprocessors.add(Chunkers.regexp(s,s));
+                if (ch.isRegExps()) {
+                    for (String s : ch.getCategories())
+                        preprocessors.add(Chunkers.regexp(s, s));
                 }
             }
         }
@@ -238,7 +238,7 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
         chunks.add(new Chunk(chunkText, START, 0, 0));
         chunks.add(new Chunk(chunkText, END, chunkText.getContent().length(), chunkText.getContent().length()));
         //add chunk from preprocessors
-        for(Chunker ch : preprocessors) chunks.addAll(ch.chunk(chunkText));
+        for (Chunker ch : preprocessors) chunks.addAll(ch.chunk(chunkText));
 
         List<Node> node = toNode(chunks);
         if (node == null || node.isEmpty()) return result;
@@ -256,8 +256,11 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
             result.add(build(m.getList(), rootCategory, text));
         }
         for (MarkedMatch mm : getAllMarked(m)) {
-            String name = mm.markMatcher.ruleName;
-            if (mm.markMatcher.generateAnnot) {
+            if (mm.markMatcher.action != null) {
+                Chunk chunk = mm.markMatcher.action.
+                        doAction(new GraphMatchWrapper(mm), build(mm.getList(), mm.markMatcher.groupName, text));
+                if (chunk != null) result.add(chunk);
+            } else if (mm.markMatcher.generateAnnot) {
                 result.add(build(mm.getList(), mm.markMatcher.groupName, text));
             }
         }
@@ -445,6 +448,7 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
         String groupName = "";
         String ruleName = "";
         private boolean generateAnnot = true;
+        private GraphMatchAction action;
 
         public MarkMatcher(String groupName, Matcher matcher) {
             this.groupName = groupName;
@@ -453,6 +457,11 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
 
         public MarkMatcher setGenerateAnnot(boolean generateAnnot) {
             this.generateAnnot = generateAnnot;
+            return this;
+        }
+
+        public MarkMatcher setAction(GraphMatchAction action) {
+            this.action = action;
             return this;
         }
 
@@ -511,6 +520,7 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
         if (categories.length == 0) return match(PredicateUtils.<Chunk>truePredicate());
         return matchCategories(PredicateUtils.<Chunk>truePredicate(), categories);
     }
+
     public static Matcher matchRegexp(String... regexps) {
         return matchCategories(PredicateUtils.<Chunk>truePredicate(), regexps).setRegExps(true);
     }
@@ -631,6 +641,7 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
     private static class PredicateMatcherWithCats extends PredicateMatcher implements CategoriesHolder {
         Set<String> categories;
         private boolean regExps;
+
         private PredicateMatcherWithCats(Predicate<? extends Edge> matchP, Set<String> categories) {
             super(matchP);
             this.categories = categories;
@@ -651,8 +662,10 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
             return this;
         }
     }
+
     public interface CategoriesHolder {
         Set<String> getCategories();
+
         boolean isRegExps();
     }
 
