@@ -1,5 +1,6 @@
 package com.myml.gexp.chunker.common;
 
+import com.myml.gexp.chunker.Chunk;
 import com.myml.gexp.chunker.Chunker;
 import com.myml.gexp.chunker.Chunkers;
 import com.myml.gexp.chunker.TextWithChunks;
@@ -10,6 +11,56 @@ import org.junit.Test;
 import static com.myml.gexp.chunker.common.typedef.GraphUtils.*;
 
 public class GraphExpChunkerTest extends Assert {
+
+    @Test
+    public void actionTest() {
+        class DoTest {
+            void test(String result, GraphMatchAction action) {
+                TextWithChunks chunkText = new TextWithChunks("a a c ");
+                GraphExpChunker ann = new GraphExpChunker(null,
+                        mark("result", seq(matchRegexp("a"), matchRegexp("a"))).setAction(action)
+                        , "b", "a", "c"
+                );
+                Chunkers.execute(ann, chunkText);
+                assertEquals(result, Chunkers.toChunksStringEx(chunkText, 20, false,
+                        "result"));
+            }
+        }
+        DoTest test = new DoTest();
+
+        //tests
+        test.test("", new GraphMatchAction() {
+            @Override
+            public Chunk doAction(GraphMatchWrapper wrapper, Chunk chunk) {
+                return null;
+            }
+        });
+
+        test.test("result[a a]\n" +
+                "[[[a a]]] c \n" +
+                "", new GraphMatchAction() {
+            @Override
+            public Chunk doAction(GraphMatchWrapper wrapper, Chunk chunk) {
+                return chunk;
+            }
+        });
+
+        test.test("result[a]\n" +
+                "[[[a]]] a c \n" +
+                "" +
+                "", new GraphMatchAction() {
+            @Override
+            public Chunk doAction(GraphMatchWrapper wrapper, Chunk chunk) {
+                Chunk ch = wrapper.getChunksList().get(0).clone();
+                assertNotSame(ch, wrapper.getChunksList().get(0));
+                assertTrue(ch.equals(wrapper.getChunksList().get(0)));
+                ch.features().put("key", "value");
+                assertFalse(ch.equals(wrapper.getChunksList().get(0)));
+                Chunk result = new Chunk(ch.text(), "result", ch.start, ch.end);
+                return result;
+            }
+        });
+    }
 
     //no need to run predefined pipeline when we use regexp(String regexp)
     @Test
@@ -27,6 +78,7 @@ public class GraphExpChunkerTest extends Assert {
                 "result"));
 
     }
+
     //select all c without b ahead
     @Test
     public void notTest() {

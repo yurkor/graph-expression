@@ -12,12 +12,12 @@ import static com.google.common.base.Objects.equal;
  * Date: 04.02.2011
  * Time: 15:32:55
  */
-public class Chunk implements Comparable<Chunk> {
+public class Chunk implements Comparable<Chunk>, Cloneable {
     TextWithChunks text; //not final for rebind
     public final String type;
     public final int start;
     public final int end;
-    private Map<String,Object> features;
+    private Map<String, Object> features;
 
     public Chunk(TextWithChunks text, String type, int start, int end) {
         this.text = text;
@@ -46,13 +46,14 @@ public class Chunk implements Comparable<Chunk> {
         features().put(name, property);
         return this;
     }
+
     public <T> T get(String name) {
-        if(features == null) return null;
-        else return (T)features().get(name);
+        if (features == null) return null;
+        else return (T) features().get(name);
     }
 
-    public Map<String,Object> features() {
-        if(features == null) features = Maps.newHashMap();
+    public Map<String, Object> features() {
+        if (features == null) features = Maps.newHashMap();
         return features;
     }
 
@@ -66,11 +67,25 @@ public class Chunk implements Comparable<Chunk> {
         if (o == null || getClass() != o.getClass()) return false;
         Chunk chunk = (Chunk) o;
         return equal(end, chunk.end) && equal(start, chunk.start)
-                && equal(type, chunk.type);
+                && equal(type, chunk.type) && equal(features, chunk.features);
     }
 
     @Override
     public int hashCode() {
         return Objects.hashCode(type, start, end);
+    }
+
+    @Override
+    public Chunk clone() {
+        Chunk result;
+        try {
+            result = (Chunk) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+        if (this.features != null) {
+            result.features = Maps.newHashMap(features);
+        }
+        return result;
     }
 }
