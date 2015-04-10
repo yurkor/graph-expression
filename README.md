@@ -20,3 +20,4 @@ Usage:
   * easy **embeddable** - few line of java code and you can use power of graph-expression in you project.
 
 Read more on wiki
+https://github.com/yurkor/graph-expression/blob/wiki/ProjectHome.md
