@@ -1,7 +1,6 @@
 package com.myml.gexp.graph.matcher;
 
 import org.apache.commons.collections15.Predicate;
-import org.apache.commons.collections15.PredicateUtils;
 
 import java.util.Arrays;
 
@@ -43,7 +42,7 @@ public class GraphRegExpMatchers {
     }
 
     /**
-     * fist we do lookahed then execute predicate
+     * fist we do lookahead then execute predicate
      *
      * @param matcher
      * @param p

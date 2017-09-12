@@ -26,7 +26,7 @@ public class InnerGraphMatcher extends Matcher {
         }
 
         public InnerGraphMatcher setPerformFullMatch() {
-                this.matcherInCondtion = GraphExpChunker.match(matcherInCondtion, new Predicate<GraphMatchWrapper>() {
+                this.matcherInCondtion = GraphExpChunker.matchChunk(matcherInCondtion, new Predicate<GraphMatchWrapper>() {
                         @Override
                         public boolean evaluate(GraphMatchWrapper match2) {
                                 Node endNodeOfMatch2 = match2.match.getEndNode();

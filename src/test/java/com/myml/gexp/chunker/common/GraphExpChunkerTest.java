@@ -64,7 +64,7 @@ public class GraphExpChunkerTest extends Assert {
 
     //no need to run predefined pipeline when we use regexp(String regexp)
     @Test
-    public void regexpPreporcessorTest() {
+    public void regexpPreprocessorTest() {
         TextWithChunks chunkText = new TextWithChunks("a a c b b c a a");
         GraphExpChunker ann = new GraphExpChunker("result",
                 seq(matchRegexp("a"), matchRegexp("c"), matchRegexp("b"))

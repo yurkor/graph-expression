@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static com.myml.gexp.chunker.common.GraphExpChunker.match;
+import static com.myml.gexp.chunker.common.GraphExpChunker.matchChunk;
 import static com.myml.gexp.chunker.common.typedef.GraphUtils.mark;
 import static com.myml.gexp.chunker.common.typedef.GraphUtils.regexp;
 import static com.myml.gexp.graph.matcher.GraphRegExpMatchers.*;
@@ -57,7 +58,7 @@ public class SentenceSplitterExampleTest extends Assert {
                                 )
                         ),
                         new GraphExpChunker("Sentence",
-                                match(seq(
+                                matchChunk(seq(
                                         times(Token, 3, 100).reluctant(),
                                         or(match("Stop"), match(GraphExpChunker.END))
                                 ), balancedParentnesPredicate)
