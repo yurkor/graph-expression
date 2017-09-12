@@ -29,7 +29,7 @@ public class GraphUtils extends GraphExpChunker {
 
     public static GraphRegExp.Matcher regexp(String regexp, GraphRegExp.Matcher matcher) {
         final Pattern pat = Pattern.compile(regexp);
-        return match(matcher, new Predicate<GraphMatchWrapper>() {
+        return matchChunk(matcher, new Predicate<GraphMatchWrapper>() {
             public boolean evaluate(GraphMatchWrapper graphMatchWrapper) {
                 return pat.matcher(graphMatchWrapper.getText()).find();
             }
@@ -38,7 +38,7 @@ public class GraphUtils extends GraphExpChunker {
 
     public static GraphRegExp.Matcher regexpNot(String regexp, GraphRegExp.Matcher matcher) {
         final Pattern pat = Pattern.compile(regexp);
-        return match(matcher, new Predicate<GraphMatchWrapper>() {
+        return matchChunk(matcher, new Predicate<GraphMatchWrapper>() {
             public boolean evaluate(GraphMatchWrapper graphMatchWrapper) {
                 return !pat.matcher(graphMatchWrapper.getText()).find();
             }
@@ -90,7 +90,7 @@ public class GraphUtils extends GraphExpChunker {
     }
 
     public static GraphRegExp.Matcher logger(final String name, GraphRegExp.Matcher matcher) {
-        return match(matcher, new Predicate<GraphMatchWrapper>() {
+        return matchChunk(matcher, new Predicate<GraphMatchWrapper>() {
             @Override
             public boolean evaluate(GraphMatchWrapper graphMatchWrapper) {
                 System.out.printf("%s=%s\n", name, graphMatchWrapper.getText());

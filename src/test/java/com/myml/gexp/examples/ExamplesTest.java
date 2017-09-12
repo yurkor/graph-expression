@@ -134,8 +134,8 @@ public class ExamplesTest extends Assert {
                                 seq(
                                         NotNumber,
                                         mark("IpAddress", seq(
-                                                match(Number, new NumberPredicate(1, 255)),
-                                                times(match(Number, new NumberPredicate(0, 255)), 3, 3)
+                                                matchChunk(Number, new NumberPredicate(1, 255)),
+                                                times(matchChunk(Number, new NumberPredicate(0, 255)), 3, 3)
                                         )),
                                         NotNumber
                                 )
@@ -285,7 +285,7 @@ public class ExamplesTest extends Assert {
         public Chunker createDateTimeChunker() {
                 class Util {
                         GraphRegExp.Matcher number(final int min, final int max) {
-                                return match(GraphUtils.regexp("^\\d+$", match("Token")), new Predicate<GraphMatchWrapper>() {
+                                return matchChunk(GraphUtils.regexp("^\\d+$", match("Token")), new Predicate<GraphMatchWrapper>() {
                                         @Override
                                         public boolean evaluate(GraphMatchWrapper graphMatchWrapper) {
                                                 int value = Integer.parseInt(graphMatchWrapper.getText());

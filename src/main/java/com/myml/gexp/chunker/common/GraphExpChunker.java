@@ -500,7 +500,7 @@ public class GraphExpChunker extends GraphRegExpMatchers implements Chunker {
      * @param annsPred
      * @return
      */
-    public static Matcher match(final Matcher matcher, final Predicate<? super GraphMatchWrapper> annsPred) {
+    public static Matcher matchChunk(final Matcher matcher, final Predicate<? super GraphMatchWrapper> annsPred) {
         return new GroupPredicateMatcher(new Predicate<Match>() {
             public boolean evaluate(Match match) {
                 return annsPred.evaluate(new GraphMatchWrapper(match));
